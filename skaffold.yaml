@@ -1,0 +1,42 @@
+---
+
+apiVersion: skaffold/v1
+kind: Config
+
+build:
+  local:
+    useBuildkit: true
+
+profiles:
+  - name: dev-source
+    activation:
+    - command: dev
+    build:
+      artifacts:
+        - image: gopg
+          docker:
+            target: dev-source
+          sync:
+            infer: ["**/*.go"]
+
+  - name: debug
+    activation:
+    - command: debug
+    build:
+      artifacts:
+        - image: gopg
+          docker:
+            target: debug
+          sync:
+            infer: ["**/*.go"]
+
+  - name: run
+    activation:
+    - command: run
+    build:
+      artifacts:
+        - image: gopg
+          docker:
+            target: prod
+
+

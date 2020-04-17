@@ -1,0 +1,8 @@
+{
+  "cloudcode.last-used-context": {
+    "Run on Kubernetes": {
+      "kubeConfigPath": "~/.kube/config",
+      "contextName": "k3s-default"
+    }
+  }
+}

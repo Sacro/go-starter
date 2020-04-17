@@ -1,0 +1,27 @@
+version: '2'
+
+tasks:
+  build:
+    cmds:
+      - CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -ldflags '-extldflags "-static"' -o main.exe .
+    desc: Builds an executable
+
+  dev:
+    cmds:
+      - air
+    desc: Runs the code and watches for changes (air)
+    preconditions:
+      - sh: "test ! -d out"
+        msg: "Already running (found out)"
+      - sh: "type air"
+        msg: "https://github.com/cosmtrek/air#Installation"
+
+  lint:
+    cmds:
+      - revive -config revive.toml -exclude=vendor/... ./...
+    desc: Runs the linter (revive)
+    preconditions:
+      - sh: "type revive"
+        msg: "https://github.com/mgechev/revive#installation"
+
+

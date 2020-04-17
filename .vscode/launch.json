@@ -1,0 +1,60 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Launch Package",
+      "type": "go",
+      "request": "launch",
+      "mode": "debug",
+      "program": "${workspaceFolder}"
+    },
+    {
+      "name": "Launch test package",
+      "type": "go",
+      "request": "launch",
+      "mode": "test",
+      "program": "${workspaceFolder}"
+    },
+    {
+      "type": "cloudcode.kubernetes",
+      "request": "launch",
+      "name": "Run on Kubernetes (local)",
+      "skaffoldConfig": "${workspaceFolder}/skaffold.yaml",
+      "watch": true,
+      "cleanUp": true,
+      "portForward": true,
+      "profile": "dev-source",
+      "imageRegistry": "registry.local:5000/gopg"
+    },
+    {
+      "type": "cloudcode.kubernetes",
+      "request": "launch",
+      "name": "Debug on Kubernetes (local)",
+      "skaffoldConfig": "${workspaceFolder}/skaffold.yaml",
+      "watch": true,
+      "cleanUp": true,
+      "portForward": true,
+      "profile": "debug",
+      "imageRegistry": "registry.local:5000/gopg",
+    },
+    {
+      "type": "cloudcode.kubernetes",
+      "language": "Go",
+      "request": "attach",
+      "debugPort": 2345,
+      "localRoot": "${workspaceFolder}",
+      "remoteRoot": "/app",
+      "name": "Attach App on Kubernetes Cluster: Go",
+      "podSelector": {
+        "app": "gopg-app"
+      }
+    }
+  ],
+  "compounds": [{
+    "name": "Debug and Attach to Kubernetes",
+    "configurations": [
+      "Debug on Kubernetes (local)",
+      "Attach App on Kubernetes Cluster: Go"
+    ],
+  }]
+}
