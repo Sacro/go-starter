@@ -1,9 +1,19 @@
 version: '2'
 
 tasks:
-  build:
+  build-darwin:
     cmds:
-      - CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -ldflags '-extldflags "-static"' -o main.exe .
+      - GOOS=darwin GOARCH=amd64 go build -ldflags="-w -s" -o main-darwin.exe .
+    desc: Builds an executable
+
+  build-linux:
+    cmds:
+      - GOOS=linux GOARCH=amd64 go build -ldflags="-w -s" -o main-linux.exe .
+    desc: Builds an executable
+
+  build-windows:
+    cmds:
+      - GOOS=windows GOARCH=amd64 go build -ldflags="-w -s" -o main-windows.exe .
     desc: Builds an executable
 
   dev:

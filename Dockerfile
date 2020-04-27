@@ -21,9 +21,9 @@ CMD ["dlv", "debug", "/app", "--accept-multiclient", "--api-version=2", "--headl
 
 FROM base as source
 COPY . .
-RUN task build
+RUN task build-linux
 
-FROM scratch as prod
+FROM gcr.io/distroless/base@sha256:2b0a8e9a13dcc168b126778d9e947a7081b4d2ee1ee122830d835f176d0e2a70 as prod
 WORKDIR /app
-COPY --from=source /app/main.exe ./main
+COPY --from=source /app/main-linux.exe ./main
 CMD ["./main"]

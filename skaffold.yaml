@@ -1,6 +1,6 @@
 ---
 
-apiVersion: skaffold/v1
+apiVersion: skaffold/v2beta2
 kind: Config
 
 build:
@@ -10,33 +10,33 @@ build:
 profiles:
   - name: dev-source
     activation:
-    - command: dev
+      - command: dev
     build:
       artifacts:
         - image: gopg
+          sync:
+            infer:
+              - "**/*.go"
           docker:
             target: dev-source
-          sync:
-            infer: ["**/*.go"]
 
   - name: debug
     activation:
-    - command: debug
+      - command: debug
     build:
       artifacts:
         - image: gopg
+          sync:
+            infer:
+              - "**/*.go"
           docker:
             target: debug
-          sync:
-            infer: ["**/*.go"]
 
   - name: run
     activation:
-    - command: run
+      - command: run
     build:
       artifacts:
         - image: gopg
           docker:
             target: prod
-
-
