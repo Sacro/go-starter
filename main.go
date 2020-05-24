@@ -1,9 +1,9 @@
 package main
 
 import (
-	"log"
+	"github.com/apex/log"
 )
 
 func main() {
-	log.Println("Hello World!")
+	log.Info("Hello World!")
 }
