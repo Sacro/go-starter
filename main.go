@@ -8,9 +8,7 @@ import (
 	"path/filepath"
 
 	"github.com/apex/log"
-	"github.com/peterbourgon/ff/v3"
 	"github.com/peterbourgon/ff/v3/ffcli"
-	"github.com/peterbourgon/ff/v3/ffyaml"
 	"gitlab.com/ben178/go-starter/pkg/hellocmd"
 	"gitlab.com/ben178/go-starter/pkg/logging"
 	"gitlab.com/ben178/go-starter/pkg/rootcmd"
@@ -19,25 +17,10 @@ import (
 func main() {
 	appName := filepath.Base(os.Args[0])
 
-	fs := flag.NewFlagSet(appName, flag.ExitOnError)
 	var (
-		_                       = fs.String("config", "", "config file")
-		logHandler              = fs.String("o", "default", "["+logging.GetLogOutputs()+"]")
-		logLevel                = fs.String("v", "error", "["+logging.GetLogLevels()+"]")
 		rootCommand, rootConfig = rootcmd.New(appName)
-
-		helloCommand = hellocmd.New(rootConfig)
+		helloCommand            = hellocmd.New(rootConfig)
 	)
-
-	if err := ff.Parse(fs, os.Args[1:],
-		ff.WithConfigFileFlag("config"),
-		ff.WithConfigFileParser(ffyaml.Parser),
-		ff.WithEnvVarNoPrefix(),
-	); err != nil {
-		log.WithError(err).Fatal("Unable to parse flags")
-	}
-
-	rootCommand.FlagSet = fs
 
 	rootCommand.Subcommands = []*ffcli.Command{
 		helloCommand,
@@ -47,7 +30,7 @@ func main() {
 		log.WithError(err).Fatal("Unable to parse commands")
 	}
 
-	if err := logging.Configure(logHandler, logLevel); err != nil {
+	if err := logging.Configure(&rootConfig.LogHandler, &rootConfig.LogLevel); err != nil {
 		log.WithError(err).Fatal("Unable to configure logger")
 	}
 

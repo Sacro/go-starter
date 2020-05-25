@@ -7,7 +7,7 @@
       "request": "launch",
       "mode": "debug",
       "program": "${workspaceFolder}/main.go",
-      "args": ["hello", "ben"]
+      "args": ["-config", "config.yml"]
     },
     {
       "type": "cloudcode.kubernetes",

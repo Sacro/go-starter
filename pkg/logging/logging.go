@@ -13,8 +13,8 @@ import (
 
 // Configure configures the logger with the specified handler and level
 func Configure(logHandler, logLevel *string) error {
-	if *logHandler != "default" {
-		handler, ok := LogOutputs[*logHandler]
+	if *logHandler != "" {
+		handler, ok := logOutputs[*logHandler]
 		if !ok {
 			return fmt.Errorf("Level: %v not found", *logHandler)
 		}
@@ -42,8 +42,8 @@ func GetLogLevels() string {
 	}, ", ")
 }
 
-// LogOutputs is a map of strings to log handlers
-var LogOutputs = map[string]log.Handler{
+// logOutputs is a map of strings to log handlers
+var logOutputs = map[string]log.Handler{
 	"cli":    cli.Default,
 	"json":   json.Default,
 	"logfmt": logfmt.Default,

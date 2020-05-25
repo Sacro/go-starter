@@ -3,8 +3,13 @@ package rootcmd
 import (
 	"context"
 	"flag"
+	"os"
 
+	"github.com/apex/log"
+	"github.com/peterbourgon/ff/v3"
 	"github.com/peterbourgon/ff/v3/ffcli"
+	"github.com/peterbourgon/ff/v3/ffyaml"
+	"gitlab.com/ben178/go-starter/pkg/logging"
 )
 
 // Config for the root command, including flags and types that should be
@@ -27,6 +32,14 @@ func New(appName string) (*ffcli.Command, *Config) {
 	fs := flag.NewFlagSet(appName, flag.ExitOnError)
 	cfg.RegisterFlags(fs)
 
+	if err := ff.Parse(fs, os.Args[1:],
+		ff.WithConfigFileFlag("config"),
+		ff.WithConfigFileParser(ffyaml.Parser),
+		ff.WithEnvVarNoPrefix(),
+	); err != nil {
+		log.WithError(err).Fatal("Unable to parse flags")
+	}
+
 	return &ffcli.Command{
 		ShortUsage: appName + " [flags] <subcommand> [flags] [<arg>...]",
 		FlagSet:    fs,
@@ -38,7 +51,10 @@ func New(appName string) (*ffcli.Command, *Config) {
 // helper function allows subcommands to register the root flags into their
 // flagsets, creating "global" flags that can be passed after any subcommand at
 // the commandline.
-func (c *Config) RegisterFlags(_ *flag.FlagSet) {
+func (c *Config) RegisterFlags(fs *flag.FlagSet) {
+	fs.StringVar(&c.Config, "config", "", "config path (YAML format)")
+	fs.StringVar(&c.LogHandler, "o", "", "["+logging.GetLogOutputs()+"]")
+	fs.StringVar(&c.LogLevel, "v", "error", "["+logging.GetLogLevels()+"]")
 }
 
 // Exec function for this command.
