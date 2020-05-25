@@ -16,7 +16,6 @@ import (
 // available to each subcommand.
 type Config struct {
 	AppName    string
-	Config     string
 	LogHandler string
 	LogLevel   string
 }
@@ -32,14 +31,6 @@ func New(appName string) (*ffcli.Command, *Config) {
 	fs := flag.NewFlagSet(appName, flag.ExitOnError)
 	cfg.RegisterFlags(fs)
 
-	if err := ff.Parse(fs, os.Args[1:],
-		ff.WithConfigFileFlag("config"),
-		ff.WithConfigFileParser(ffyaml.Parser),
-		ff.WithEnvVarNoPrefix(),
-	); err != nil {
-		log.WithError(err).Fatal("Unable to parse flags")
-	}
-
 	return &ffcli.Command{
 		ShortUsage: appName + " [flags] <subcommand> [flags] [<arg>...]",
 		FlagSet:    fs,
@@ -52,9 +43,18 @@ func New(appName string) (*ffcli.Command, *Config) {
 // flagsets, creating "global" flags that can be passed after any subcommand at
 // the commandline.
 func (c *Config) RegisterFlags(fs *flag.FlagSet) {
-	fs.StringVar(&c.Config, "config", "", "config path (YAML format)")
+	_ = fs.String("config", "", "config path (YAML format)")
 	fs.StringVar(&c.LogHandler, "o", "", "["+logging.GetLogOutputs()+"]")
 	fs.StringVar(&c.LogLevel, "v", "error", "["+logging.GetLogLevels()+"]")
+
+	if err := ff.Parse(fs, os.Args[1:],
+		ff.WithIgnoreUndefined(true),
+		ff.WithConfigFileFlag("config"),
+		ff.WithConfigFileParser(ffyaml.Parser),
+		ff.WithEnvVarNoPrefix(),
+	); err != nil {
+		log.WithError(err).Fatal("Unable to parse flags")
+	}
 }
 
 // Exec function for this command.
