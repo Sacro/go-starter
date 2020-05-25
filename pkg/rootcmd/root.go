@@ -28,7 +28,6 @@ func New(appName string) (*ffcli.Command, *Config) {
 	cfg.RegisterFlags(fs)
 
 	return &ffcli.Command{
-		Name:       appName,
 		ShortUsage: appName + " [flags] <subcommand> [flags] [<arg>...]",
 		FlagSet:    fs,
 		Exec:       cfg.Exec,
@@ -39,8 +38,7 @@ func New(appName string) (*ffcli.Command, *Config) {
 // helper function allows subcommands to register the root flags into their
 // flagsets, creating "global" flags that can be passed after any subcommand at
 // the commandline.
-func (c *Config) RegisterFlags(fs *flag.FlagSet) {
-	fs.StringVar(&c.Config, "config", "", "path to config file (YAML)")
+func (c *Config) RegisterFlags(_ *flag.FlagSet) {
 }
 
 // Exec function for this command.

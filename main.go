@@ -19,7 +19,7 @@ import (
 func main() {
 	appName := filepath.Base(os.Args[0])
 
-	fs := flag.NewFlagSet(appName, flag.ContinueOnError)
+	fs := flag.NewFlagSet(appName, flag.ExitOnError)
 	var (
 		_                       = fs.String("config", "", "config file")
 		logHandler              = fs.String("o", "default", "["+logging.GetLogOutputs()+"]")
@@ -34,24 +34,26 @@ func main() {
 		ff.WithConfigFileParser(ffyaml.Parser),
 		ff.WithEnvVarNoPrefix(),
 	); err != nil {
-		log.WithError(err).Error("Unable to parse flags")
+		log.WithError(err).Fatal("Unable to parse flags")
 	}
+
+	rootCommand.FlagSet = fs
 
 	rootCommand.Subcommands = []*ffcli.Command{
 		helloCommand,
 	}
 
 	if err := rootCommand.Parse(os.Args[1:]); err != nil {
-		log.WithError(err).Error("Unable to parse commands")
+		log.WithError(err).Fatal("Unable to parse commands")
 	}
 
 	if err := logging.Configure(logHandler, logLevel); err != nil {
-		log.WithError(err).Error("Unable to configure logger")
+		log.WithError(err).Fatal("Unable to configure logger")
 	}
 
 	if err := rootCommand.Run(context.Background()); err != nil {
 		if !errors.Is(err, flag.ErrHelp) {
-			log.WithError(err).Error("Unable to start")
+			log.WithError(err).Fatal("Unable to start")
 		}
 	}
 }
