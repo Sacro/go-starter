@@ -15,9 +15,9 @@ type Config struct {
 	greeting   string
 }
 
-// New returns a usable ffcli.Command for the hello subcommand.
+// New returns a usable ffcli.Command for the hello subcommand.ls
 func New(rootConfig *rootcmd.Config) *ffcli.Command {
-	var cfg = Config{
+	cfg := Config{
 		rootConfig: rootConfig,
 	}
 
