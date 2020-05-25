@@ -1,6 +1,7 @@
 package logging
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/apex/log"
@@ -9,6 +10,26 @@ import (
 	"github.com/apex/log/handlers/logfmt"
 	"github.com/apex/log/handlers/text"
 )
+
+// Configure configures the logger with the specified handler and level
+func Configure(logHandler, logLevel *string) error {
+	if *logHandler != "default" {
+		handler, ok := LogOutputs[*logHandler]
+		if !ok {
+			return fmt.Errorf("Level: %v not found", *logHandler)
+		}
+		log.SetHandler(handler)
+	}
+
+	level, err := log.ParseLevel(*logLevel)
+
+	if err != nil {
+		return fmt.Errorf("Unable to parse log level: %w", err)
+	}
+
+	log.SetLevel(level)
+	return nil
+}
 
 // GetLogLevels returns the log levels available as a comma seperated string
 func GetLogLevels() string {

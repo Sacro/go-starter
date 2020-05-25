@@ -45,18 +45,8 @@ func main() {
 		log.WithError(err).Error("Unable to parse commands")
 	}
 
-	if *logHandler != "default" {
-		if handler, ok := logging.LogOutputs[*logHandler]; !ok {
-			log.Warnf("Level: %v not found", logHandler)
-		} else {
-			log.SetHandler(handler)
-		}
-	}
-
-	if level, err := log.ParseLevel(*logLevel); err != nil {
-		log.WithError(err).Error("Unable to parse log level")
-	} else {
-		log.SetLevel(level)
+	if err := logging.Configure(logHandler, logLevel); err != nil {
+		log.WithError(err).Error("Unable to configure logger")
 	}
 
 	if err := root.Run(context.Background()); err != nil {
